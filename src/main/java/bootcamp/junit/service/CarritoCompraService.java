@@ -11,5 +11,6 @@ public interface CarritoCompraService {
 	List<Articulo> getArticulos();
 	Double totalPrice();
 	Double calculadorDescuento(Double precio, Double porcentajeDescuento);
-	Double aplicarDescuento(Integer idArticulo, Double porcentaje);
+	Double aplicarDescuento(Integer idArticulo, Double porcentaje);	
+	Integer addArticuloBdAndList(Articulo articulo);
 }

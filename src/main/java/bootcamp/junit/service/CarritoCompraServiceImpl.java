@@ -11,6 +11,7 @@ import bootcamp.junit.model.Articulo;
 
 @Service
 public class CarritoCompraServiceImpl implements CarritoCompraService {
+	
 	@Autowired
 	private BaseDatosServiceI bdService;
 
@@ -61,6 +62,18 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
 		}
 
 		return resultado;
+	}
+
+	@Override
+	public Integer addArticuloBdAndList(Articulo articulo) {
+		//Añadir articulo en bd
+		bdService.insertarArticulo(articulo);
+		//Obtengo el ultimo id de la bd para saber el id de mi articulo insertado 
+		int ultimoIDInsertado =  bdService.lastIndex();
+		//Añadir articulo en la lista con el id que tiene en mi bd
+		listaArticulos.add(ultimoIDInsertado, articulo);
+		
+		return ultimoIDInsertado;
 	}
 
 }
