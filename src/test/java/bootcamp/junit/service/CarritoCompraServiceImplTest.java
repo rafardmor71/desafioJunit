@@ -1,9 +1,7 @@
 package bootcamp.junit.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -15,13 +13,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import bootcamp.junit.bbdd.BaseDatosServiceImpl;
 import bootcamp.junit.model.Articulo;
 
-@ActiveProfiles("test")
+
 @TestMethodOrder(OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 class CarritoCompraServiceImplTest {
@@ -29,13 +27,10 @@ class CarritoCompraServiceImplTest {
 	@Mock
 	private BaseDatosServiceImpl bbdService;
 
-	@Mock
-	private CarritoCompraServiceImpl carrito;
+	@InjectMocks
+	private CarritoCompraServiceImpl carrito = new CarritoCompraServiceImpl();
 
-	@Mock
-	private List<Articulo> listArticulosMock;
-	
-	@Mock
+
 	private List<Articulo> listArticulos;
 
 	//List<Articulo> mockedListArticulos = mock();
@@ -43,17 +38,18 @@ class CarritoCompraServiceImplTest {
 	
 	@BeforeEach
 	void testinitBD() {
-		carrito = new CarritoCompraServiceImpl();
+		//carrito = new CarritoCompraServiceImpl();
 		listArticulos = carrito.getArticulos();
 	}
 	
-	
+
 	//Hecho
 	@Test
 	@Order(value = 1)
 	void testAddArticulo() {
-		carrito.addArticulo(new Articulo("Nuevo Articulo", 20.01));
-		assertFalse(listArticulos.isEmpty());
+		Articulo articulo1 = new Articulo("Nuevo Articulo", 20.01);
+		carrito.addArticulo(articulo1);
+		assertTrue(carrito.getArticulos().contains(articulo1));
 	}
 
 	//Hecho
@@ -81,10 +77,9 @@ class CarritoCompraServiceImplTest {
 	@Order(value = 4)
 	void testAplicadorDescuento() {
 		Articulo articulo = new Articulo("Articulo nuevo", 66.35);
-		when(bbdService.findArticuloById(1)).thenReturn(articulo);
-		Double res = carrito.aplicarDescuento(1, 120.0);
-		
-		//verify(mockedList).size();
+		when(bbdService.findArticuloById(any(Integer.class))).thenReturn(articulo);
+		Double res = carrito.aplicarDescuento(1, 10.0);
+		assertEquals(6.635, res);
 	}
 
 	@Test
@@ -105,10 +100,13 @@ class CarritoCompraServiceImplTest {
 	@Order(value = 7)
 	void testAddArticuloBdAndList() {
 		Articulo articulo = new Articulo("", 50.00);
-		int id = carrito.addArticuloBdAndList(articulo);
-		assertEquals(id, 4);
+		int id = 0;
+		id = carrito.addArticuloBdAndList(articulo);
+		assertEquals(id, 0);
+		
+		assertTrue(carrito.getArticulos().contains(articulo));
 		//assertFalse(listArticulos.isEmpty());
-		//verify(list, atLeast(2)).someMethod("was called at least twice");
+		//verify();
 	}
 	
 	
